@@ -6,42 +6,14 @@
 /*   By: bruno <bruno@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/20 16:34:50 by bruno             #+#    #+#             */
-/*   Updated: 2024/04/24 01:04:14 by bruno            ###   ########.fr       */
+/*   Updated: 2024/04/26 02:05:54 by bruno            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/so_long.h"
 
-void	handle_death(t_vars *vars)
+int	handle_move(t_vars *vars)
 {
-	mlx_clear_window(vars->mlx, vars->win);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->map->death.img, 0, 0);
-}
-
-void	render(t_vars *vars, t_img *img)
-{
-	render_map(vars, img);
-	render_player(vars, img);
-//	mlx_clear_window(vars->mlx, vars->win);
-	mlx_put_image_to_window(vars->mlx, vars->win, img->img, 0, 0);
-}
-
-void	random_move(t_vars *vars)
-{
-	time_t t;
-	srand((unsigned) time(&t));
-	vars->timer++;
-	if (vars->timer >= 150)
-	{
-		vars->timer = 0;
-		printf("%d\n", rand() % 4);
-	}
-//	printf("%d\n", vars->timer);
-}
-
-int	handle_move(t_vars *vars)//might not need?
-{
-//	random_move(vars);
 	if (vars->player->is_alive)
 		render(vars, vars->load);
 	return (1);
@@ -49,17 +21,21 @@ int	handle_move(t_vars *vars)//might not need?
 
 void	check_moves(t_vars *vars, int x, int y)
 {
-	if (vars->player->is_alive && (vars->player->x != x || vars->player->y != y))
+	if (vars->player->is_alive && (vars->player->x != x
+			|| vars->player->y != y))
 		ft_printf("%d\n", vars->player->moves++);
 	if (vars->map->map[vars->player->y / SCALE][vars->player->x / SCALE] == 'C')
 		vars->player->can_exit = true;
-	if (vars->player->can_exit && vars->map->map[vars->player->y / SCALE]
+	if (vars->player->can_exit && vars->player->is_alive
+		&& vars->map->map[vars->player->y / SCALE]
 		[vars->player->x / SCALE] == 'E')
 		return (clean(vars), exit(1));
 	if (vars->map->map[vars->player->y / SCALE][vars->player->x / SCALE] == 'B')
 	{
 		vars->player->is_alive = false;
-		handle_death(vars);
+		mlx_clear_window(vars->mlx, vars->win);
+		mlx_put_image_to_window(vars->mlx, vars->win,
+			vars->map->death.img, 0, 0);
 	}
 }
 
