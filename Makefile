@@ -41,5 +41,4 @@ fclean: clean
 	@echo so_long fclean
 
 re: fclean all
-
 .PHONY: all bonus fclean clean re
